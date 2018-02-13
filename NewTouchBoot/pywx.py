@@ -56,8 +56,6 @@ class Example(wx.Frame):
 
     def Pressedrpb(self, e):
 
-        fileopen('/opt/retropie/configs/all/NewTouchBoot/mounts')
-        sleep(2)
         f = open("/opt/retropie/configs/all/NewTouchBoot/checknum","w")
         f.write("num=1")
         f.close()
@@ -65,8 +63,6 @@ class Example(wx.Frame):
 
     def Pressedkb(self, e):
 
-        fileopen('/opt/retropie/configs/all/NewTouchBoot/mounts')
-        sleep(2)
         f = open("/opt/retropie/configs/all/NewTouchBoot/checknum","w")
         f.write("num=2")
         f.close()
@@ -74,8 +70,6 @@ class Example(wx.Frame):
 
     def Pressedrb(self, e):
 
-        fileopen('/opt/retropie/configs/all/NewTouchBoot/mounts')
-        sleep(2)
         f = open("/opt/retropie/configs/all/NewTouchBoot/checknum","w")
         f.write("num=3")
         f.close()
@@ -83,8 +77,6 @@ class Example(wx.Frame):
 
     def Pressedtb(self, e):
 
-        fileopen('/opt/retropie/configs/all/NewTouchBoot/mounts')
-        sleep(2)
         f = open("/opt/retropie/configs/all/NewTouchBoot/checknum","w")
         f.write("num=4")
         f.close()
