@@ -1,0 +1,22 @@
+axis vendor=0x057e product=0x2006 src=16 target=mouse axis=1
+axis vendor=0x057e product=0x2006 src=17 target=mouse axis=0
+button vendor=0x057e product=0x2006 src=18 target=kbd button="up"
+button vendor=0x057e product=0x2006 src=19 target=kbd button="right"
+button vendor=0x057e product=0x2006 src=17 target=kbd button="down"
+button vendor=0x057e product=0x2006 src=16 target=kbd button="left"
+button vendor=0x057e product=0x2006 src=24 target=kbd button="esc"
+button vendor=0x057e product=0x2006 src=29 target=kbd button="l"
+button vendor=0x057e product=0x2006 src=30 target=kbd button="q"
+button vendor=0x057e product=0x2006 src=31 target=kbd button="e"
+button vendor=0x057e product=0x2006 src=26 target=kbd button="t"
+axis vendor=0x057e product=0x2007 src=16 target=kbd plus="w" minus="s" deadzone=10 flags=trinary
+axis vendor=0x057e product=0x2007 src=17 target=kbd plus="d" minus="a" deadzone=10 flags=trinary
+button vendor=0x057e product=0x2007 src=18 target=mouse button=2
+button vendor=0x057e product=0x2007 src=19 target=mouse button=0
+button vendor=0x057e product=0x2007 src=17 target=kbd button="c"
+button vendor=0x057e product=0x2007 src=16 target=mouse button=1
+button vendor=0x057e product=0x2007 src=25 target=kbd button="enter"
+button vendor=0x057e product=0x2007 src=28 target=kbd button="n"
+button vendor=0x057e product=0x2007 src=30 target=kbd button="m"
+button vendor=0x057e product=0x2007 src=31 target=kbd button="k"
+button vendor=0x057e product=0x2007 src=27 target=kbd button="j"

@@ -1,0 +1,29 @@
+a[0]=js1.a[0];
+a[1]=js1.a[1];
+a[2]=255-js1.a[0];
+a[3]=255-js1.a[1];
+if (js0.b[0]) {
+	thread abcdef {
+		press("a");
+		release("a");
+		delay(2000);
+		press("b");
+		release("b");
+		delay(2000);
+		press("c");
+		release("c");
+		delay(2000);
+		press("d");
+		release("d");
+		delay(2000);
+		press("e");
+		release("e");
+		delay(2000);
+		press("f");
+		release("f");
+		delay(2000);
+	}
+} else {
+	halt abcdef;
+}
+halt;

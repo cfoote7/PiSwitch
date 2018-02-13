@@ -1,0 +1,500 @@
+\documentclass{article}
+\def\pipe{$|$}
+\title{Joystick Mapper for Linux -- Programming Guide}
+\author{Alexandre Hardy}
+\parindent=0cm
+\begin{document}
+\maketitle
+This document describes programming language used by the
+joystick mapping software. The driver creates a new joystick
+device that can be mapped with the normal joystick mapping
+software. To use the programming language effectively
+the virtual joystick device must be mapped to some joystick
+button or axis. The virtual joystick device is indicated
+by a vendor id of {\tt 0x00ff} and a product id of {\tt 0x0000}.\\
+
+At each execution cycle, the program is executed from the
+beginning until termination (in sequence) or a maximum number of instructions
+has been executed (to prevent the driver from looping indefinitely).
+The exception to this rule is {\tt threads} described in
+section \ref{sec:thread}.\\
+
+Comments are indicated by a hash (\#) and continue to the end of the line.
+
+We now describe the basic components of a program.
+
+\section{Variables}
+All variables in the programming language are 32-bit integers.
+These variables can be used to store results from calculations
+and can represent button values or axis values. A new variable 
+is declared with the {\tt var} statement:
+\begin{center}
+	{\tt var} {\it variable\_name};
+\end{center}
+where {\it variable\_name} is any identifier that begins with a letter
+followed by letters, digits or the underscore. Variable names
+are case-sensitive. These variables can be used for any purpose.
+Variables are allocated to registers in the virtual machine. Since
+there are 256 such registers, only 256 variables can be declared
+in addition to the predefined variables.\\
+
+Arrays can be declared as follows
+\begin{center}
+	{\tt var} {\it variable\_name}{\tt [{\it constant}]};
+\end{center}
+The size of the array must be constant. Each element of the array
+is assigned to one register. Registers can be used up very 
+quickly by declaring arrays! Arrays are 0 based, that is the
+first index of any array is 0.\\
+
+A variable can be declared with the {\tt global} keyword instead, in 
+which case the variable is {\it shared} between all threads. This 
+variable can then be used for inter thread communication.
+
+There are a few predefined variables that have a special meaning. These
+variables are described in the following sections.
+
+\subsection{{\tt firstscan}}
+The {\tt firstscan} variable is set to 1 if this is the
+first time the program is executed, and 0 otherwise. This
+variable can be used to decide when to initialize program
+variables.
+
+\subsection{{\tt clocktick}}
+The {\tt clocktick} variable is set to 1 if the program
+is executed as a result of a timer event, or 0 if the
+program is executed due to some other event (such as
+a joystick button being pressed).
+
+\subsection{{\tt timestamp}}
+\label{sec:timestamp}
+The {\tt timestamp} variable indicates the time since first
+execution of the script measured in milliseconds. This variable can be used to
+queue statements based on time. Examples of use include
+the {\tt delay} statement (section \ref{sec:delay}).
+
+\subsection{{\tt currentmode}}
+The {\tt currentmode} variable is defined by the
+program to provide state referring to a mode of
+operation. The variable is completely controlled
+by the user and may be used for any purpose.
+Unlike general variables, this variable is
+accessible from all {\tt threads} (see section \ref{sec:thread}).
+
+\subsection{{\tt js}}
+The {\tt js} variables give access to the current state of
+joysticks attached to the system. There are 16 {\tt js}
+variables, namely {\tt js0} through {\tt js15} that
+provide access to a maximum of 16 joysticks. The joysticks
+are numbered according to the specification in the
+current mapping configuration file. That is, the joystick
+numbers are explicitly assigned when the joystick is
+mapped. Each {\tt js} variable has two fields:
+\begin{itemize}
+	\item An {\tt a} field that is an array of integers.
+		Each element provides the current position
+		of that axis of that joystick.
+		For example {\tt js0.a[1]}, refers to
+		the second axis of the joystick designated
+		as 0~in the configuration file.
+	\item A {\tt b} field that is an array of integers.
+		Each element provides the current button status 
+		of that button of that joystick.
+		For example {\tt js1.b[3]}, refers to
+		the fourth button of the joystick designated
+		as 1~in the configuration file. The value is
+		1 for a depressed button and 0 otherwise.
+\end{itemize}
+
+\subsection{{\tt a}}
+The variable {\tt a} is an array of integers specifying the
+position of the virtual axis of the virtual joystick 
+created by the program. For example the
+statement
+\begin{center}
+	{\tt a[1]=10;}
+\end{center}
+reports that the second axis of the virtual program joystick
+is in position 10. The variable may also be read.
+
+\subsection{{\tt b}}
+The {\tt b} variable is an array of integers indicating
+whether a virtual button on the virtual program joystick 
+is depressed or not. For example, to indicate that
+the first button on the virtual joystick is
+depressed, we write
+\begin{center}
+	{\tt b[0]=1;}
+\end{center}
+and to indicate (at a later time) that the button is released
+we write
+\begin{center}
+	{\tt b[0]=0;}
+\end{center}
+This variable may also be read.
+
+\section{Operators}
+Operators are used to build expressions 
+to perform some calculation. The operators
+are very similar to C operators with some
+minor differences. Operators take constants,
+variables, array elements or other expressions as parameters.
+\subsection{Arithmetic operators}
+The arithmetic operators are as follows:
+\begin{itemize}
+	\item Unary +, eg. $+v$.
+	\item Unary -, eg. $-v$.
+	\item Binary + eg. $v_1+v_2$.
+	\item Binary - eg. $v_1+v_2$.
+	\item Binary $\ast$ eg. $v_1\ast v_2$.
+	\item Binary / -- integer division. eg. $v_1/v_2$.
+	\item Binary \% -- integer remainder. eg. $v_1\%v_2$.
+		This function is not implemented with
+		primitive instructions and is implemented as
+		$a\%b=a-(a/b)\ast b$.
+\end{itemize}
+
+\subsection{Boolean operators}
+Boolean operators allow certain conditions to be tested.
+The result is an integer indicating the truth of the
+statement. 0 is taken to mean {\it false}, and anything
+else is taken to mean {\it true}. Thus integer values (variables,
+results from a calculation) are also boolean values.
+\begin{itemize}
+	\item {\tt a==b}: true if integer {\tt a} is equal to integer {\tt b}, false otherwise.
+	\item {\tt a!=b}: true if integer {\tt a} is NOT equal to integer {\tt b}, false otherwise.
+	\item {\tt a<b}: true if integer {\tt a} is less than integer {\tt b}, false otherwise.
+	\item {\tt a>b}: true if integer {\tt a} is greater than integer {\tt b}, false otherwise.
+	\item {\tt a<=b}: true if integer {\tt a} is less than or equal to integer {\tt b}, false otherwise.
+	\item {\tt a>=b}: true if integer {\tt a} is greater than or equal to integer {\tt b}, false otherwise.
+	\item {\tt a\&\&b}: true if {\tt a} is true and {\tt b} is true, false otherwise.
+	\item {\tt a\pipe\pipe b}: true if {\tt a} is true or {\tt b} is true, false otherwise.
+	\item {\tt !a}: true if {\tt a} is false, false otherwise.
+\end{itemize}
+\subsection{Precedence}
+Unary operators have the highest precedence. 
+The precedence of binary operators is similar to C.
+The precedence from highest to lowest is:
+\begin{itemize}
+	\item \&\& and  \pipe\pipe
+	\item $\ast$, / and \%
+	\item + and -
+	\item {\tt ==, !=, <=, >=, <}  and {\tt >}
+\end{itemize}
+
+\section{Program statements}
+All statements are terminated by a semi-colon, except the
+statement block.
+\subsection{Assignment}
+Assignment is the most commonly used statement.
+An example of assignment is 
+\begin{center}
+	{\tt currentmode=1;}
+\end{center}
+This sets the variable currentmode to have the value 1. Be careful
+not to confuse the assignment operator = with the boolean equality 
+test ==.
+A few shorthand notations exist for some common assignment operations:
+\begin{itemize}
+	\item {\tt a++} $\rightarrow$ {\tt a=a+1;}
+	\item {\tt a--} $\rightarrow$ {\tt a=a-1;}
+	\item {\tt a+=b} $\rightarrow$ {\tt a=a+b;}
+	\item {\tt a-=b} $\rightarrow$ {\tt a=a-b;}
+	\item {\tt a*=b} $\rightarrow$ {\tt a=a*b;}
+	\item {\tt a/=b} $\rightarrow$ {\tt a=a/b;}
+\end{itemize}
+\subsection{Statement blocks}
+If several statements need to be combined into a unit,
+a statement block can be created as follows:
+\begin{center}
+	\parbox{5cm}{
+	{\tt \{\\
+		\strut\ \ \ \ $statement_1$;\\
+		\strut\ \ \ \ $statement_2$;\\
+		\strut\ \ \ \ $statement_3$;\\
+		\strut\ \ \ \ \vdots\\
+		\strut\ \ \ \ $statement_n$;\\
+	\} }
+	}
+\end{center}
+\subsection{{\tt if}}
+An {\tt if} statement has the form
+\begin{center}
+	{\tt if ({\it condition}) {\it statement}}
+\end{center}
+If the {\it statement} is a simple statement, then it is terminated
+by a semi-colon. If it is a block statement, then no semi-colon 
+is necessary.\\
+
+If the expression {\it condition} evaluates to 0 then the
+{\it statement} is not executed, otherwise the {\it statement}
+is executed. It is also possible to specify to alternatives
+as in
+\begin{center}
+	{\tt if ({\it condition}) {$statement_1$}} else $statement_2$
+\end{center}
+where $statement_2$ is executed if {\it condition} evaluates
+to 0, otherwise $statement_1$ is executed.
+
+\subsection{{\tt while}}
+A {\tt while} loop has the form
+\begin{center}
+	{\tt while ({\it condition}) {\it statement};}
+\end{center}
+As long as {\it condition} evaluates to a non-zero value
+{\it statement} will be executed. The {\it condition}
+is evaluated before the {\it statement} is executed
+and is tested directly before the first (possible)
+execution, and directly after execution of {\it statement}.
+If {\it condition} evaluates to 0, then the loop
+is terminated.
+\subsection{{\tt signal}}
+The {\tt signal} statement has the form
+\begin{center}
+	{\tt signal({\it expression});}
+\end{center}
+This statement sends the result of expression
+to the mapper device (the device used to program the joystick)
+to be relayed to a client program. This can be
+used to trigger events outside of the kernel
+space. For example, the joystick could
+be reprogrammed by the client program based
+on the signal sent, or a particular program such
+as an e-mail client or multimedia player could be executed.
+\subsection{{\tt press}}
+The {\tt press} statement allows keypresses to be sent
+directly to the driver. {\tt press} has
+the form
+\begin{center}
+	{\tt press("{\it key}");}
+\end{center}
+where {\it key} is one of the constants listed in {\tt keys.txt}.
+{\tt press} sends a key pressed event to the driver.
+\subsection{{\tt release}}
+The {\tt release} statement allows key release events to be sent
+directly to the driver. {\tt release} has
+the form
+\begin{center}
+	{\tt release("{\it key}");}
+\end{center}
+where {\it key} is one of the constants listed in {\tt keys.txt}.
+{\tt release} sends a key released event to the driver.
+\subsection{{\tt thread}}
+\label{sec:thread}
+{\tt Threads} are threads of execution in the sense that each thread
+will remember which statement was executing during the last execution
+of this thread. Thus threads maintain state information in terms
+of an instruction pointer and a collection of registers. {\tt Threads}
+do not imply concurrent execution in any way whatsoever! The {\tt thread}
+statement declares a thread with independent state, as well as
+indicating that the thread must be executed at this point. The
+main program will stop executing until execution of this thread completes
+or the thread yields. If the thread halts, then the state information
+of the thread is reset. If the thread yields, then the thread will
+stop execution and save the instruction pointer so that the 
+thread can be resumed later. The first time the thread is executed (or after 
+the last halt), the current registers are stored in the state
+of the thread and the instruction pointer is set to the
+first instruction (statement) of the thread. Thereafter (until the next halt), the thread will use
+its own copy of the registers (except for special registers such as {\tt timestamp}
+and {\tt currentmode}). If the thread was not halted, then the instruction
+pointer will be used to resume execution of the thread.\\
+
+The thread statement has the form
+\begin{center}
+	{\tt thread statements;}
+\end{center}
+The statement declares a new thread to the compiler. The compiler will also 
+generate instructions to begin execution of the thread (suspending execution
+of the main program until the thread has halted or yielded).
+Each thread is allocated a unique thread number. The maximum number of threads
+in a program is 8. However, an alternative declaration
+\begin{center}
+	{\tt thread {\it name} statements;}
+\end{center}
+can be used to provide a specific name to a thread. All threads in the
+program with the same name will share the same thread number, thus increasing
+the potential number of threads. If there are two or more such threads, then
+the programmer is declaring to the compiler that only one such
+thread will NOT be in the halted state at any time.
+\subsection{{\tt delay}}
+\label{sec:delay}
+The {\tt delay} statement is only valid within a
+{\tt thread} statement. The {\tt delay} statement has the form
+\begin{center}
+	{\tt delay({\it expression});}
+\end{center}
+This statement will delay the executing {\tt thread} {\it expression} milliseconds 
+(see {\tt timestamp} in section \ref{sec:timestamp}). The mechanism used
+to delay this period of time is a check of the amount of time delayed so
+far, followed by a yield if the required time has not elapsed.
+The thread will resume execution at this statement the next time
+it is executed if the required time has not elapsed. Note that
+the expression is reevaluated every time the delay is checked.
+
+\subsection{{\tt wait}}
+The {\tt wait} statement is only valid within a
+{\tt thread} statement. The {\tt wait} statement has
+the form 
+\begin{center}
+	{\tt wait({\it condition});}
+\end{center}
+This statement halts the executing thread until {\it condition} becomes
+true (that is non-zero). The {\tt wait} statement is implemented
+by a yield if {\it condition} is false, which returns control to the
+calling thread. The thread will resume execution at this statement
+the next time it is executed.
+
+\subsection{{\tt halt}}
+The halt statement has the form
+\begin{center}
+	{\tt halt;}
+\end{center}
+and halts execution of the current thread or the main program.
+Every program must halt. The compiler automatically adds a {\tt halt}
+statement to the end of any program to ensure that the
+program will halt.\\
+
+It is also possible to halt a specific thread (possibly different to the current one) with
+the statement
+\begin{center}
+	{\tt halt {\it name};}
+\end{center}
+\section{Examples}
+A few examples of programs are presented in this section.
+In most of the examples it is necessary to provide a mapping
+from the virtual joystick to a real joystick, or keyboard events.
+\subsection{Toe Brakes}
+Some flight simulators support toe brakes in the form of buttons
+or keypresses, but do not support an axis for toe brakes. If this
+is the case, we can use the toe brake axis on a set of rudder pedals
+to simulate joystick button or key pressed. Assume that the
+rudder pedals have been designated as joystick 2, and that the
+toe brake axes are axes 0 and 1. The program to convert the
+axis positions to button presses is:
+\begin{verbatim}
+     b[0]=(js2.a[0]>128);
+     b[1]=(js2.a[1]>128);
+\end{verbatim}
+Remember that {\tt b} is the array of buttons for the
+virtual joystick, and that boolean and integer expressions
+are interchangeable. The typical range for any axis is 0--255,
+hence the choice of comparison to 128.
+The program's virtual joystick buttons should then be mapped
+to real joystick buttons, or to key presses.
+
+\subsection{Car Accelerator and Brakes}
+Most rudder pedals have to separate axes for the left and
+right toe brake, but car simulators tend to use only one joystick 
+axis for both acceleration and braking. Assume the same setup
+as above with axis 0 to be used for the brake, and
+axis 1 to be used for the accelerator. The two axes can be mapped
+to one axis with the program 
+\begin{verbatim}
+     var val; 
+     #get a positive value for acceleration
+     # >128 indicates acceleration
+     val=js2.a[1]/2+128;     
+     #produce a braking value
+     # <128 indicates brakes
+     # we need to reverse the sense of the axis
+     val-=js2.a[0]/2;     
+     a[0]=val;
+     #note that accelerating and braking at 
+     # the same time results in no action
+     # but cannot be resolved here
+\end{verbatim}
+\subsection{Delayed Release of Countermeasures}
+In modern combat flight simulators it is necessary to 
+drop countermeasures such as flares or chaff to confuse
+the seeker heads of missiles launched at the aircraft.
+In such a situation it is standard practice to
+release several countermeasures with a delay between
+the release of each one. A thread should be used to
+achieve this, so that other conditions may be checked
+and other actions followed despite the presence
+of countermeasures.
+\begin{verbatim}
+     var i;
+     thread {
+          if (js0.b[5]) {
+               i=5;
+               while (i>0) {
+                    b[0]=1;
+                    delay(2);
+                    b[0]=0;
+                    delay(2000);
+                    i--;
+               }
+          }
+     }
+\end{verbatim}
+This code will trigger the release of 5 countermeasures 
+with a delay of 2 seconds between each countermeasure. Countermeasures
+will be launched as soon as button number 5 of joystick 0
+is pressed. They will continue to be launched even if the
+button is immediately released.
+
+\subsection{Trimming}
+It is sometimes necessary to trim the controls of an aircraft
+so that straight and level flight can be maintained with
+the joystick in a central position. The trim position may
+change due to changes in air speed or other factors.
+The program below trims the joystick according to the current
+joystick position.
+\begin{verbatim}
+     var trimx;
+     var trimy;
+     # the original values of trimx and trimy
+     var ox, oy;
+     if (firstscan) {
+          #center position is zero
+          trimx=128;
+          trimy=128;
+          ox=128;
+          oy=128;
+     }
+     #check for trimming button pressed
+     if (js0.b[5]) {
+          trimx=128-js0.a[0]+ox;
+          trimy=128-js0.a[1]+oy;
+     } else {
+          ox=trimx;
+          oy=trimy;
+     }
+     #check for reset button pressed
+     if (js0.b[6]) {
+          #reset center position is zero
+          trimx=128;
+          trimy=128;
+          ox=128;
+          oy=128;
+     } 
+     a[0]=js0.a[0]-trimx+128;
+     a[1]=js0.a[1]-trimy+128;
+\end{verbatim}
+
+\subsection{Waiting for Release of a Button}
+Assume you want to launch exactly one missile
+with a button press, and the simulation software
+launches missiles in sequence according to
+whether the button is depressed or not.
+\begin{verbatim}
+     thread {
+          #wait for first press of the button
+          wait(js0.b[1]);
+          #wait for release 
+          wait(!js0.b[1]);
+          #press virtual button
+          b[0]=1;
+          #and release after 1 second
+          delay(1000);
+          b[0]=0;
+     }
+\end{verbatim}
+Due to the input driver system it should be possible
+to omit the delay, both the press and release should
+be reported. However, the simulation software
+may not work in entirely the same way. 
+
+\end{document}

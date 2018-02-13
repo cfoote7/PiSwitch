@@ -1,0 +1,45 @@
+#sample using joystick number, id=4 implies use of js4
+axis id=0 src=4 target=joyaxis device=1 axis=1
+
+#sample using vendor and product id. remap to joystick 0 (js0 if joymap is installed first)
+#device defaults to 0 if not specified
+#CH Products Combatstick
+axis vendor=0x068e product=0x00f4 src=0 target=joyaxis device=0 axis=0
+axis vendor=0x068e product=0x00f4 src=1 target=joyaxis device=0 axis=1
+button vendor=0x068e product=0x00f4 src=0 target=joybtn device=0 button=0 
+#flag can be: 
+#    button: 
+#        autorelease: release the key automatically
+#        release:     only apply rule on releasing the button (otherwise only on pressing)
+#        press:       only apply rule on pressing the button 
+#        shift:       apply this operation if shifted
+#        invert:      reverse the axis (if an axis is the target)
+#if press and release are not specified, then two rules are created, one with release 
+#and one with press in such a way that buttons will correspond precisely 
+#    axis:
+#        invert:      reverse the axis
+#
+button vendor=0x068e product=0x00f4 src=1 target=kbd button="a" flags=autorelease 
+#strings can be used to specify a sequence, REL indicates release
+#see keys.map
+button vendor=0x068e product=0x00f4 src=2 target=kbd button="b REL b a REL a n REL n g REL g leftshift num1 REL num1 REL leftshift"  
+
+#CH Products PRO Throttle
+axis vendor=0x068e product=0x00f1 src=2 target=joyaxis device=0 axis=2
+axis vendor=0x068e product=0x00f1 src=0 target=mouse axis=0
+axis vendor=0x068e product=0x00f1 src=1 target=mouse axis=1
+button vendor=0x068e product=0x00f1 src=1 target=mouse button=0
+
+#CH Products Pedals 
+axis vendor=0x068e product=0x00f2 src=2 target=joyaxis device=0 axis=3
+
+#specify a shift button, that gives access to extra functionality
+shift vendor=0x068e product=0x00f1 src=5
+
+#assign a joystick number fo script purposes
+script vendor=0x068e product=0x00f4 device=0 #Combatstick
+script vendor=0x068e product=0x00f1 device=1 #Throttle
+
+#for adding a custom program script
+code "test.program"
+

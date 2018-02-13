@@ -1,0 +1,14 @@
+     var i;
+     thread {
+          if (js0.b[0]) {
+               i=5;
+               while (i>0) {
+                    b[0]=1;
+                    delay(1000);
+                    b[0]=0;
+                    delay(2000);
+                    i--;
+               }
+          }
+     }
+

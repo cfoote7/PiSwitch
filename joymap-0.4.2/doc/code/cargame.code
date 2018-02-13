@@ -1,0 +1,13 @@
+     var val; 
+     #get a positive value for acceleration
+     # >128 indicates acceleration
+     val=js2.a[1]/2+128;     
+     #produce a braking value
+     # <128 indicates brakes
+     # we need to reverse the sense of the axis
+     val-=js2.a[0]/2;     
+     a[0]=val;
+     #note that accelerating and braking at 
+     # the same time results in no action
+     # but cannot be resolved here
+

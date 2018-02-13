@@ -1,0 +1,29 @@
+     var trimx;
+     var trimy;
+     # the original values of trimx and trimy
+     var ox, oy;
+     if (firstscan) {
+          #center position is zero
+          trimx=128;
+          trimy=128;
+          ox=128;
+          oy=128;
+     }
+     #check for trimming button pressed
+     if (js0.b[0]) {
+          trimx=128-js0.a[0]+ox;
+          trimy=128-js0.a[1]+oy;
+     } else {
+          ox=trimx;
+          oy=trimy;
+     }
+     #check for reset button pressed
+     if (js0.b[1]) {
+          #reset center position is zero
+          trimx=128;
+          trimy=128;
+          ox=128;
+          oy=128;
+     } 
+     a[0]=js0.a[0]-trimx+128;
+     a[1]=js0.a[1]-trimy+128;

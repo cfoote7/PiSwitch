@@ -1,0 +1,12 @@
+axis vendor=0x00ff product=0x0000 src=0 target=joyaxis axis=0
+
+#Mapper code device
+button vendor=0x00ff product=0x0000 src=0 target=joybtn button=1
+button vendor=0x00ff product=0x0000 src=1 target=joybtn button=2
+
+#assign a joystick number fo script purposes
+script vendor=0x068e product=0x00f4 device=0 #Combatstick
+script vendor=0x068e product=0x00f1 device=1 #Throttle
+script vendor=0x068e product=0x00f2 device=2 #Pedals
+
+code "cargame.code"

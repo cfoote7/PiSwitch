@@ -1,0 +1,12 @@
+     thread {
+          #wait for first press of the button
+          wait(js0.b[1]);
+          #wait for release 
+          wait(!js0.b[1]);
+          #press virtual button
+          b[0]=1;
+          #and release after a very short time
+          delay(1000);
+          b[0]=0;
+     }
+
