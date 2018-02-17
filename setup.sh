@@ -19,3 +19,4 @@ sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/pywx.py
 sudo chmod a+x /opt/retropie/configs/all/NewTouchBoot/pywx.py
 sudo chmod 777 /opt/retropie/configs/all/autostart.sh
 sudo chmod a+x /opt/retropie/configs/all/autostart.sh
+sudo reboot
