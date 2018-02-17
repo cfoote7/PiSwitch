@@ -2,7 +2,6 @@
 
 sudo apt-get install python-wxgtk3.0
 git clone  https://github.com/cfoote7/PiSwitch /home/pi/PiSwitch
-cd /home/pi/PiSwitch
 sudo cp /home/pi/PiSwitch/autostart.sh /opt/retropie/configs/all/autostart.sh
 sudo cp -R /home/pi/PiSwitch/NewTouchBoot/ /opt/retropie/configs/all/NewTouchBoot
 sudo cp -R /home/pi/PiSwitch/joymap/ /home/pi/joymap
