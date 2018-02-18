@@ -14,3 +14,7 @@ if you have questions I'd look here first, I'm happy to help answer anything I c
 The map files are located in the joymap folde - loadmap is the binary ofr Linux Joystick Mapper recompiled for JoyCon support. You may need too recompile this for your device in that case go to the joymap-0.4.2 folder, delete loadmap run "make" and then copy the new loadmap over to the joymap directory.
 
 NewTouchBoot is a folder that gets put under /opt/retropie/configs/all/  It contains a bunch of scripts and a python program that launches a touch boot option menu.
+
+Tips:
+
+The controllers map to keyboard keys that's how I got both controllers working as one controller. I'm building solutions to connect controllers more smoothly and to choose single or two palyer modes. If you boot up and choose retropie without pressing any controller buttons you can setup the two controllers seperately as single player controllers. then anytime you boot up without pressing any buttons to wake the remotes they'll work as 2 seperate players. also if you ever get stuck with no controllers working and want to navigate retropie without a joy-con the arrow keys are the d-pad "A" is "v", "B" is "x", "start" is "enter" and "select" is "shift"
