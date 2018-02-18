@@ -6,6 +6,11 @@ sudo cp /home/pi/PiSwitch/autostart.sh /opt/retropie/configs/all/autostart.sh
 sudo cp -R /home/pi/PiSwitch/NewTouchBoot/ /opt/retropie/configs/all/NewTouchBoot
 sudo cp -R /home/pi/PiSwitch/joymap/ /home/pi/joymap
 sudo cp /home/pi/PiSwitch/config.txt /boot/config.txt
+sudo cp /home/pi/PiSwitch/SwitchBerry.jpg /home/pi/RetroPie/splashscreens/SwitchBerry.jpg
+sudo cp /home/pi/PiSwitch/cmdline.txt /boot/cmdline.txt
+sudo chmod 777 /home/pi/RetroPie/splashscreens/SwitchBerry.jpg
+sudo chmod 777 /boot/cmdline.txt
+sudo chmod a+x /boot/cmdline.txt
 sudo chmod 777 /home/pi/joymap/* && sudo chmod a+x /home/pi/joymap/*
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/checknum
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/retro.jpg
