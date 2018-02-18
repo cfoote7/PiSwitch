@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install python-wxgtk3.0
+sudo apt-get install -y python-wxgtk3.0
 git clone  https://github.com/cfoote7/PiSwitch /home/pi/PiSwitch
 sudo cp /home/pi/PiSwitch/autostart.sh /opt/retropie/configs/all/autostart.sh
 sudo cp -R /home/pi/PiSwitch/NewTouchBoot/ /opt/retropie/configs/all/NewTouchBoot
