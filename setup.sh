@@ -20,7 +20,7 @@ sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/retro.jpg
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/kodi.jpg
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/terminal.png
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/Debian.jpg
-sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/left.png
+sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/left.jpg
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/right.jpg
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/check.png
 sudo chmod 777 /opt/retropie/configs/all/NewTouchBoot/logfile.txt
