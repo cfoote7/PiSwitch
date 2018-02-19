@@ -1,4 +1,10 @@
 # PiSwitch
+
+--UPDATE-- v1.2 --2/19/18--
+added controller pairing menu with instructions
+added debian on screen keyboard Menu > Accesories > Keyboard
+added one player / two player selection
+
 Work on PiSwitch Project
 
 Hi I'm building a repo for my PiSwitch project which is growing in popularity, feel free to use or expand upon what I'm working on here. I'm not a stickler about getting credit for my work but if you do anyting cool with it I'd love to see / here from you, especially if you've made improvements and I'm the first to admit there's lots of room for that.
