@@ -20,4 +20,7 @@ then
 elif [ $num -eq 4 ]
 then
      exit 0
+elif [ $num -eq 5 ]
+then
+     emulationstation
 fi
